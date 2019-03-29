@@ -11,8 +11,8 @@
     <arg name="ticks_per_meter" default="111.41"/>
     <arg name="base_width" default="0.21"/>
     <arg name="run_diag" default="true"/>
-    <arg name="child_frame" default="bobby" />
-    <arg name="publish_tf" default="false" />
+    <arg name="child_frame" default="wheel_odom_base" />
+    <arg name="publish_tf" default="true" />
 
     <!-- make sure type = "roboclaw_node.py" is executable use $ chmod +x roboclaw_node.py in term--> 
     <node if="$(arg run_diag)" pkg="roboclaw_node" type="roboclaw_node.py" name="roboclaw_node">

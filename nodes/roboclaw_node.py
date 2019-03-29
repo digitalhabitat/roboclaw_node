@@ -194,7 +194,7 @@ class Node:
         self.TWIST_COMMAND = rospy.get_param("~twist_command", "roboclaw/cmd_vel")
         self.SINGLE_MOTOR = bool(rospy.get_param("~single_motor","false"))
         self.PUBLISH_TF = bool(rospy.get_param("~publish_tf","true"))
-        self.CHILD_FRAME = rospy.get_param("~child_frame", "newman") 
+        self.CHILD_FRAME = rospy.get_param("~child_frame", "base_link") 
 
         self.encodm = EncoderOdom(self.TICKS_PER_METER, self.BASE_WIDTH, self.PUBLISH_TF, self.CHILD_FRAME )
         self.last_set_speed_time = rospy.get_rostime()
