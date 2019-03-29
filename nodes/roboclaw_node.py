@@ -189,7 +189,7 @@ class Node:
         self.rc.ResetEncoders(self.address)
 
         self.MAX_SPEED = float(rospy.get_param("~max_speed", "2.0"))
-        self.TICKS_PER_METER = float(rospy.get_param("~tick_per_meter", "4342.2"))
+        self.TICKS_PER_METER = float(rospy.get_param("~ticks_per_meter", "4342.2"))
         self.BASE_WIDTH = float(rospy.get_param("~base_width", "0.315"))
         self.TWIST_COMMAND = rospy.get_param("~twist_command", "roboclaw/cmd_vel")
         self.SINGLE_MOTOR = bool(rospy.get_param("~single_motor","false"))
@@ -317,9 +317,9 @@ class Node:
         # read encoder 1 *************************************************
         try:    
             status1, enc1, crc1 = self.rc.ReadEncM1(self.address)
-            #rospy.logwarn("status1 :  %s" % status1)
-            #rospy.logwarn("enc1    :  %s" % enc1)
-            #rospy.logwarn("crc1    :  %s" % crc1)
+            rospy.loginfo("status1 :  %s" % status1)
+            rospy.loginfo("enc1    :  %s" % enc1)
+            rospy.loginfo("crc1    :  %s" % crc1)
             #if type(enc1) is not int:
             #    rospy.logwarn("enc1 is not integer, self.rc.ReadEncM1() not reading properly")
         except ValueError:
@@ -332,9 +332,9 @@ class Node:
         # read encoder 2 *************************************************
         try:
             status2, enc2, crc2 = self.rc.ReadEncM2(self.address)
-            #rospy.logwarn("status2 :  %s" % status2)
-            #rospy.logwarn("enc2    :  %s" % enc2)
-            #rospy.logwarn("crc2    :  %s" % crc2)
+            rospy.loginfo("status2 :  %s" % status2)
+            rospy.loginfo("enc2    :  %s" % enc2)
+            rospy.loginfo("crc2    :  %s" % crc2)
             #if type(enc2) is not int:
             #    rospy.logwarn("enc2 is not integer, self.rc.ReadEncM1() not reading properly")
         except ValueError:
@@ -364,6 +364,7 @@ class Node:
         self.last_set_speed_time = rospy.get_rostime()   
 
         linear_x = twist.linear.x
+        rospy.loginfo("linear_x = %d", linear_x)
         if linear_x > self.MAX_SPEED:
             linear_x = self.MAX_SPEED
         if linear_x < -self.MAX_SPEED:
@@ -377,18 +378,18 @@ class Node:
             vr_ticks = int(vr * self.TICKS_PER_METER)  # ticks/s
             vl_ticks = int(vl * self.TICKS_PER_METER)
 
-            rospy.logdebug("vr_ticks:%d vl_ticks: %d", vr_ticks, vl_ticks)
+            rospy.loginfo("vr_ticks:%d vl_ticks: %d", vr_ticks, vl_ticks)
 
             try:
-                # This is a hack way to keep a poorly tuned PID from making noise at speed 0
+                # This is ba hack way to keep a poorly tuned PID from making noise at speed 0
                 if vr_ticks is 0 and vl_ticks is 0:
                     status1 = self.rc.ForwardM1(self.address, 0)
                     status2 = self.rc.ForwardM2(self.address, 0)
-                    rospy.logwarn("cmd_vel_callback: status1 :  %s" % status1)
-                    rospy.logwarn("cmd_vel_callback: status2 :  %s" % status2)
+                    rospy.loginfo("cmd_vel_callback: status1 :  %s" % status1)
+                    rospy.loginfo("cmd_vel_callback: status2 :  %s" % status2)
                 else:
                     status1 = self.rc.SpeedM1M2(self.address, vr_ticks, vl_ticks)
-                    rospy.logwarn("cmd_vel_callback: status1 :  %s" % status1)
+                    rospy.loginfo("cmd_vel_callback: status1 :  %s" % status1)
             
             except ValueError:
                 rospy.logwarn("tick value error")
@@ -401,23 +402,23 @@ class Node:
         else:
             vx_ticks = int(linear_x * self.TICKS_PER_METER) # ticks/s
 
-            rospy.logdebug("vx_ticks:%d", vx_ticks)
+            rospy.loginfo("vx_ticks:%d", vx_ticks)
 
             try:
                 # This is a hack way to keep a poorly tuned PID from making noise at speed 0 
                 if vx_ticks is 0:
                     status1 =  self.rc.ForwardM1(self.address, 0)
-                    rospy.logwarn("cmd_vel_callback: status1 :  %s" % status1)
+                    rospy.loginfo("cmd_vel_callback: status1 :  %s" % status1)
                 else:
                     status1 = self.rc.SpeedM1(self.address, vx_ticks)
-                    rospy.logwarn("cmd_vel_callback: status1 :  %s" % status1)
+                    rospy.loginfo("cmd_vel_callback: status1 :  %s" % status1)
 
             except ValueError:
                 rospy.logwarn("tick value error")
                 pass
             except OSError as e:
-            rospy.logwarn("SpeedM1 OSError: %d", e.errno)
-            rospy.logdebug(e)
+                rospy.logwarn("SpeedM1 OSError: %d", e.errno)
+                rospy.logdebug(e)
                 
         rospy.logwarn("cmd_vel_callback ************ EXIT") 
 
