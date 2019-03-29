@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<launch>
+	<!-- drive wheel radius = 6 centimeters = 0.06 meters -->	
+	<!-- (42 ticks/revolution) divide by (2*pi*radius_meters/revolution) -->
+	<!-- use math above to get ticks_per_meters = 111.41-->
+	<!-- base width is the length between left and right rear wheels -->
+    <arg name="dev" default="/dev/ttyACM0"/>
+    <arg name="baud" default="115200"/>
+    <arg name="address" default="128"/>
+    <arg name="max_speed" default="2.0"/>
+    <arg name="ticks_per_meter" default="111.41"/>
+    <arg name="base_width" default="0.21"/>
+    <arg name="run_diag" default="true"/>
+    <arg name="child_frame" default="bobby" />
+    <arg name="publish_tf" default="false" />
+
+    <!-- make sure type = "roboclaw_node.py" is executable use $ chmod +x roboclaw_node.py in term--> 
+    <node if="$(arg run_diag)" pkg="roboclaw_node" type="roboclaw_node.py" name="roboclaw_node">
+        <param name="~dev" value="$(arg dev)"/>
+        <param name="~baud" value="$(arg baud)"/>
+        <param name="~address" value="$(arg address)"/>
+        <param name="~max_speed" value="$(arg max_speed)"/>
+        <param name="~ticks_per_meter" value="$(arg ticks_per_meter)"/>
+        <param name="~base_width" value="$(arg base_width)"/>
+        <param name="~child_frame" value="$(arg child_frame)"/>
+        <param name="~publish_tf" value="$(arg publish_tf)"/>
+    </node>
+
+    <node pkg="diagnostic_aggregator" type="aggregator_node"
+          name="diagnostic_aggregator">
+        <rosparam command="load"
+                  file="$(find roboclaw_node)/config/roboclaw_diag.yaml"/>
+    </node>
+
+</launch>
