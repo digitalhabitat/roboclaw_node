@@ -361,7 +361,7 @@ class Node:
         # Make sure this callback only occurs after reading encoders  
         # and only once or not at all
         # rospy.logwarn("cmd_vel_callback ************ ENTER")  
-        self.last_set_speed_time = rospy.get_rostime()
+        self.last_set_speed_time = rospy.get_rostime()   
 
         linear_x = twist.linear.x
         if linear_x > self.MAX_SPEED:
@@ -369,32 +369,56 @@ class Node:
         if linear_x < -self.MAX_SPEED:
             linear_x = -self.MAX_SPEED
 
-        vr = linear_x + twist.angular.z * self.BASE_WIDTH / 2.0  # m/s
-        vl = linear_x - twist.angular.z * self.BASE_WIDTH / 2.0
+        # if Dual motor differential driver mode
+        if self.SINGLE_MOTOR  == 0:
+            vr = linear_x + twist.angular.z * self.BASE_WIDTH / 2.0  # m/s
+            vl = linear_x - twist.angular.z * self.BASE_WIDTH / 2.0
 
-        vr_ticks = int(vr * self.TICKS_PER_METER)  # ticks/s
-        vl_ticks = int(vl * self.TICKS_PER_METER)
+            vr_ticks = int(vr * self.TICKS_PER_METER)  # ticks/s
+            vl_ticks = int(vl * self.TICKS_PER_METER)
 
-        rospy.logdebug("vr_ticks:%d vl_ticks: %d", vr_ticks, vl_ticks)
+            rospy.logdebug("vr_ticks:%d vl_ticks: %d", vr_ticks, vl_ticks)
 
-        try:
-            # This is a hack way to keep a poorly tuned PID from making noise at speed 0
-            if vr_ticks is 0 and vl_ticks is 0:
-                status1 = self.rc.ForwardM1(self.address, 0)
-                status2 = self.rc.ForwardM2(self.address, 0)
-                rospy.logwarn("cmd_vel_callback: status1 :  %s" % status1)
-                rospy.logwarn("cmd_vel_callback: status2 :  %s" % status2)
-            else:
-                status1 = self.rc.SpeedM1M2(self.address, vr_ticks, vl_ticks)
-                rospy.logwarn("cmd_vel_callback: status1 :  %s" % status1)
-                
+            try:
+                # This is a hack way to keep a poorly tuned PID from making noise at speed 0
+                if vr_ticks is 0 and vl_ticks is 0:
+                    status1 = self.rc.ForwardM1(self.address, 0)
+                    status2 = self.rc.ForwardM2(self.address, 0)
+                    rospy.logwarn("cmd_vel_callback: status1 :  %s" % status1)
+                    rospy.logwarn("cmd_vel_callback: status2 :  %s" % status2)
+                else:
+                    status1 = self.rc.SpeedM1M2(self.address, vr_ticks, vl_ticks)
+                    rospy.logwarn("cmd_vel_callback: status1 :  %s" % status1)
             
-        except ValueError:
+            except ValueError:
                 rospy.logwarn("tick value error")
                 pass
-        except OSError as e:
+            except OSError as e:
             rospy.logwarn("SpeedM1M2 OSError: %d", e.errno)
             rospy.logdebug(e)
+
+        # if Single motor driver mode using M1
+        else:
+            vx_ticks = int(linear_x * self.TICKS_PER_METER) # ticks/s
+
+            rospy.logdebug("vx_ticks:%d", vx_ticks)
+
+            try:
+                # This is a hack way to keep a poorly tuned PID from making noise at speed 0 
+                if vx_ticks is 0:
+                    status1 =  self.rc.ForwardM1(self.address, 0)
+                    rospy.logwarn("cmd_vel_callback: status1 :  %s" % status1)
+                else:
+                    status1 = self.rc.SpeedM1(self.address, vx_ticks)
+                    rospy.logwarn("cmd_vel_callback: status1 :  %s" % status1)
+
+            except ValueError:
+                rospy.logwarn("tick value error")
+                pass
+            except OSError as e:
+            rospy.logwarn("SpeedM1 OSError: %d", e.errno)
+            rospy.logdebug(e)
+                
         rospy.logwarn("cmd_vel_callback ************ EXIT") 
 
     # TODO: Need to make this work when more than one error is raised
