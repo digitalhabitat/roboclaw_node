@@ -394,8 +394,8 @@ class Node:
                 rospy.logwarn("tick value error")
                 pass
             except OSError as e:
-            rospy.logwarn("SpeedM1M2 OSError: %d", e.errno)
-            rospy.logdebug(e)
+                rospy.logwarn("SpeedM1M2 OSError: %d", e.errno)
+                rospy.logdebug(e)
 
         # if Single motor driver mode using M1
         else:
