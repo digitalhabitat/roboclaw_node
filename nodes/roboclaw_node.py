@@ -36,7 +36,6 @@ class EncoderOdom:
         return angle
 
     def update(self, enc_left, enc_right):
-        rospy.loginfo("inside update() funct line: 38") 
         left_ticks = enc_left - self.last_enc_left
         right_ticks = enc_right - self.last_enc_right
         self.last_enc_left = enc_left
@@ -80,7 +79,6 @@ class EncoderOdom:
         # 2106 per 0.1 seconds is max speed, error in the 16th bit is 32768
         # TODO lets find a better way to deal with this error
         # Make sure this callback is ignored while reading encoders
-        rospy.loginfo("inside update_publish() funct line: 74")
         if abs(enc_left - self.last_enc_left) > 20000:
             rospy.logerr("Ignoring left encoder jump: cur %d, last %d" % (enc_left, self.last_enc_left))
         elif abs(enc_right - self.last_enc_right) > 20000:
@@ -90,7 +88,6 @@ class EncoderOdom:
             self.publish_odom(self.cur_x, self.cur_y, self.cur_theta, vel_x, vel_theta)
 
     def publish_odom(self, cur_x, cur_y, cur_theta, vx, vth):
-        rospy.loginfo("inside publish_odom() funct line 93")
         quat = tf.transformations.quaternion_from_euler(0, 0, cur_theta)
         current_time = rospy.Time.now()
         
@@ -229,72 +226,7 @@ class Node:
         #   this replaces the <while not rospy.is_shutdown()> loop now that reading encoders is
         #   implemented in timer_callback()
         rospy.spin()
-        """
-        while not rospy.is_shutdown():
 
-            if (rospy.get_rostime() - self.last_set_speed_time).to_sec() > 1:
-                rospy.logwarn("Did not get command for 1 second, stopping")
-                try:
-                    self.rc.ForwardM1(self.address, 0)
-                    self.rc.ForwardM2(self.address, 0)
-                except OSError as e:
-                    rospy.logerr("Could not stop")
-                    rospy.logdebug(e)
-
-            
-            # Roboclaw_node will fail reading ecnoders if cmd_vel is spaming the node
-            # Make a service to request cmd vel after read enc1 and enc2 and odom publish
-
-            # TODO need find solution to the OSError11 looks like sync problem with serial
-            status1, enc1, crc1 = None, None, None
-            status2, enc2, crc2 = None, None, None
-            
-            
-            # read encoder 1 *************************************************
-            try:    
-                status1, enc1, crc1 = self.rc.ReadEncM1(self.address)
-                rospy.logwarn("status1 :  %s" % status1)
-                rospy.logwarn("enc1    :  %s" % enc1)
-                rospy.logwarn("crc1    :  %s" % crc1)
-
-                if type(enc1) is not int:
-                    rospy.logwarn("enc1 is not integer, self.rc.ReadEncM1() not reading properly")
-            except ValueError:
-                rospy.logwarn("enc2 value error")
-                pass
-            except OSError as e:
-                rospy.logwarn("ReadEncM1 OSError: %d", e.errno)
-                rospy.logdebug(e)
-            
-            # read encoder 2 *************************************************
-            try:
-                status2, enc2, crc2 = self.rc.ReadEncM2(self.address)
-                rospy.logwarn("status2 :  %s" % status2)
-                rospy.logwarn("enc2    :  %s" % enc2)
-                rospy.logwarn("crc2    :  %s" % crc2)
-                if type(enc2) is not int:
-                    rospy.logwarn("enc2 is not integer, self.rc.ReadEncM1() not reading properly")
-            except ValueError:
-                rospy.logwarn("enc2 value error")
-                pass
-            except OSError as e:
-                rospy.logwarn("ReadEncM2 OSError: %d", e.errno)
-                rospy.logdebug(e)
-
-            # update odom *************************************************
-            if ('enc1' in vars()) and ('enc2' in vars()):
-                rospy.logdebug(" Encoders %s %s" % (enc1, enc2))
-                
-                print 'updating odom'
-                self.encodm.update_publish(enc1, enc2)
-
-                self.updater.update()
-            else:
-                print 'encoder not in vars'
-            """
-               
-            # request cmd_vel before sleep**************************************
-            #r_time.sleep()
 
     def timer_callback(self, event):
         # orignal <while not rospy.is_shutdown():> loop tobe rewritten here
@@ -316,11 +248,11 @@ class Node:
         # read encoder 1 *************************************************
         try:    
             status1, enc1, crc1 = self.rc.ReadEncM1(self.address)
-            rospy.loginfo("status1 :  %s" % status1)
-            rospy.loginfo("enc1    :  %s" % enc1)
-            rospy.loginfo("crc1    :  %s" % crc1)
-            #if type(enc1) is not int:
-            #    rospy.logwarn("enc1 is not integer, self.rc.ReadEncM1() not reading properly")
+            rospy.logdebug("status1 :  %s" % status1)
+            rospy.logdebug("enc1    :  %s" % enc1)
+            rospy.logdeubg("crc1    :  %s" % crc1)
+            if type(enc1) is not int:
+                rospy.logwarn("enc1 is not integer, self.rc.ReadEncM1() not reading properly")
         except ValueError:
             rospy.logwarn("enc2 value error")
             pass
@@ -331,11 +263,11 @@ class Node:
         # read encoder 2 *************************************************
         try:
             status2, enc2, crc2 = self.rc.ReadEncM2(self.address)
-            rospy.loginfo("status2 :  %s" % status2)
-            rospy.loginfo("enc2    :  %s" % enc2)
-            rospy.loginfo("crc2    :  %s" % crc2)
-            #if type(enc2) is not int:
-            #    rospy.logwarn("enc2 is not integer, self.rc.ReadEncM1() not reading properly")
+            rospy.logdebug("status2 :  %s" % status2)
+            rospy.logdebug("enc2    :  %s" % enc2)
+            rospy.logdebug("crc2    :  %s" % crc2)
+            if type(enc2) is not int:
+                rospy.logwarn("enc2 is not integer, self.rc.ReadEncM2() not reading properly")
         except ValueError:
             rospy.logwarn("enc2 value error")
             pass
@@ -347,21 +279,22 @@ class Node:
         if ('enc1' in vars()) and ('enc2' in vars()):
             rospy.logdebug(" Encoders %s %s" % (enc1, enc2))
                
-            print 'updating odom'
+            rospy.logdebug("updating odom")
             self.encodm.update_publish(enc1, enc2)
             self.updater.update()
         else:
-            print 'encoder not in vars'
+            rospy.logdebug("encoder not in vars")
 
         #rospy.loginfo(rospy.get_caller_id() + "                       timer_callback() done")
             
 
     def cmd_vel_callback(self, twist):
         # Make sure this callback only occurs after reading encoders  
-        # and only once or not at all
-        # rospy.logwarn("cmd_vel_callback ************ ENTER")  
+        # and only once or not at all  
         self.last_set_speed_time = rospy.get_rostime()   
+        rospy.logdebug("twist message recieved: linear_x = %d angluar_z = %d", twist.linear.x, twist.agular.z)
 
+        # Apply max speed input correction
         linear_x = twist.linear.x
         rospy.loginfo("linear_x = %d", linear_x)
         if linear_x > self.MAX_SPEED:
@@ -377,18 +310,18 @@ class Node:
             vr_ticks = int(vr * self.TICKS_PER_METER)  # ticks/s
             vl_ticks = int(vl * self.TICKS_PER_METER)
 
-            rospy.loginfo("vr_ticks:%d vl_ticks: %d", vr_ticks, vl_ticks)
+            rospy.logdebug("vr_ticks:%d vl_ticks: %d", vr_ticks, vl_ticks)
 
             try:
                 # This is ba hack way to keep a poorly tuned PID from making noise at speed 0
                 if vr_ticks is 0 and vl_ticks is 0:
                     status1 = self.rc.ForwardM1(self.address, 0)
                     status2 = self.rc.ForwardM2(self.address, 0)
-                    rospy.loginfo("cmd_vel_callback: status1 :  %s" % status1)
-                    rospy.loginfo("cmd_vel_callback: status2 :  %s" % status2)
+                    rospy.logdebug("cmd_vel_callback: status1 :  %s" % status1)
+                    rospy.logdebug("cmd_vel_callback: status2 :  %s" % status2)
                 else:
                     status1 = self.rc.SpeedM1M2(self.address, vr_ticks, vl_ticks)
-                    rospy.loginfo("cmd_vel_callback: status1 :  %s" % status1)
+                    rospy.logdebug("cmd_vel_callback: status1 :  %s" % status1)
             
             except ValueError:
                 rospy.logwarn("tick value error")
@@ -401,16 +334,16 @@ class Node:
         else:
             vx_ticks = int(linear_x * self.TICKS_PER_METER) # ticks/s
 
-            rospy.loginfo("vx_ticks:%d", vx_ticks)
+            rospy.logdebug("vx_ticks:%d", vx_ticks)
 
             try:
                 # This is a hack way to keep a poorly tuned PID from making noise at speed 0 
                 if vx_ticks is 0:
                     status1 =  self.rc.ForwardM1(self.address, 0)
-                    rospy.loginfo("cmd_vel_callback: status1 :  %s" % status1)
+                    rospy.logdebug("cmd_vel_callback: status1 :  %s" % status1)
                 else:
                     status1 = self.rc.SpeedM1(self.address, vx_ticks)
-                    rospy.loginfo("cmd_vel_callback: status1 :  %s" % status1)
+                    rospy.logdebug("cmd_vel_callback: status1 :  %s" % status1)
 
             except ValueError:
                 rospy.logwarn("tick value error")
