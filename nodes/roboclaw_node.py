@@ -319,11 +319,11 @@ class Node:
                 if vr_ticks is 0 and vl_ticks is 0:
                     status1 = self.rc.ForwardM1(self.address, 0)
                     status2 = self.rc.ForwardM2(self.address, 0)
-                    rospy.logdebug("cmd_vel_callback: status1 :  %s" % status1)
-                    rospy.logdebug("cmd_vel_callback: status2 :  %s" % status2)
+                    rospy.logdebug("self.rc.ForwardM1(self.address, 0) :  %s" % status1)
+                    rospy.logdebug("self.rc.ForwardM2(self.address, 0) :  %s" % status2)
                 else:
                     status1 = self.rc.SpeedM1M2(self.address, vr_ticks, vl_ticks)
-                    rospy.logdebug("cmd_vel_callback: status1 :  %s" % status1)
+                    rospy.logdebug("self.rc.SpeedM1M2(self.address, vr_ticks, vl_ticks) :  %s" % status1)
             
             except ValueError:
                 rospy.logwarn("tick value error")
@@ -342,10 +342,10 @@ class Node:
                 # This is a hack way to keep a poorly tuned PID from making noise at speed 0 
                 if vx_ticks is 0:
                     status1 =  self.rc.ForwardM1(self.address, 0)
-                    rospy.logdebug("cmd_vel_callback: status1 :  %s" % status1)
-                else:
+                    rospy.logdebug("self.rc.ForwardM1(self.address, 0) :  %s" % status1)
+                else:   
                     status1 = self.rc.SpeedM1(self.address, vx_ticks)
-                    rospy.logdebug("cmd_vel_callback: status1 :  %s" % status1)
+                    rospy.logdebug("self.rc.SpeedM1(self.address, vx_ticks) :  %s" % status1)
 
             except ValueError:
                 rospy.logwarn("tick value error")
@@ -354,7 +354,7 @@ class Node:
                 rospy.logwarn("SpeedM1 OSError: %d", e.errno)
                 rospy.logdebug(e)
                 
-        rospy.logwarn("cmd_vel_callback ************ EXIT") 
+        rospy.logdebug("Exiting cmd_vel_callback")
 
     # TODO: Need to make this work when more than one error is raised
     def check_vitals(self, stat):
