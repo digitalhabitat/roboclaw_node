@@ -292,15 +292,17 @@ class Node:
         # Make sure this callback only occurs after reading encoders  
         # and only once or not at all  
         self.last_set_speed_time = rospy.get_rostime()   
-        rospy.logdebug("twist message recieved: linear_x = %d angluar_z = %d", twist.linear.x, twist.angular.z)
+        rospy.logdebug("twist message recieved: linear_x = %f angluar_z = %f", twist.linear.x, twist.angular.z)
 
         # Apply max speed input correction
         linear_x = twist.linear.x
-        rospy.loginfo("linear_x = %d", linear_x)
         if linear_x > self.MAX_SPEED:
             linear_x = self.MAX_SPEED
+            rospy.logdebug("Max speed correction: linear_x = %f", twist.linear.x)
         if linear_x < -self.MAX_SPEED:
             linear_x = -self.MAX_SPEED
+            rospy.logdebug("Max speed correction: linear_x = %f", twist.linear.x)
+        
 
         # if Dual motor differential driver mode
         if self.SINGLE_MOTOR  == 0:
