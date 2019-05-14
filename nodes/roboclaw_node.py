@@ -292,7 +292,7 @@ class Node:
         # Make sure this callback only occurs after reading encoders  
         # and only once or not at all  
         self.last_set_speed_time = rospy.get_rostime()   
-        rospy.logdebug("twist message recieved: linear_x = %d angluar_z = %d", twist.linear.x, twist.agular.z)
+        rospy.logdebug("twist message recieved: linear_x = %d angluar_z = %d", twist.linear.x, twist.angular.z)
 
         # Apply max speed input correction
         linear_x = twist.linear.x
