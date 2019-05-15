@@ -213,14 +213,14 @@ class Node:
         rospy.logdebug("base_width %f", self.BASE_WIDTH)
         rospy.logdebug("twist_command %s", self.TWIST_COMMAND)
         rospy.logdebug("single_motor %d", self.SINGLE_MOTOR)
-        rospy.logdebug("publsih_tf %d", self.PUBLISH_TF)
+        rospy.logdebug("publish_tf %d", self.PUBLISH_TF)
         rospy.logdebug("child_frame %s", self.CHILD_FRAME)
 
     def run(self):
 
         # TODO 
         rospy.loginfo("Starting motor drive")
-        r_time = rospy.Rate(10)
+        r_time = rospy.Rate(5)
 
         # see timer_callback()
         # spin() processes the callback queue until the node is stopped
@@ -256,7 +256,7 @@ class Node:
             if not isinstance(enc1, int):
                 rospy.logwarn("enc1 is not integer, self.rc.ReadEncM1() not reading properly")
         except ValueError:
-            rospy.logwarn("enc2 value error")
+            rospy.logwarn("enc1 value error")
             pass
         except OSError as e:
             rospy.logwarn("ReadEncM1 OSError: %d", e.errno)
