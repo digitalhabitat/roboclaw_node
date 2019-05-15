@@ -331,7 +331,7 @@ class Node:
 
                 # above hack is not working
                 status1 = self.rc.SpeedM1M2(self.address, vr_ticks, vl_ticks)
-                    rospy.logdebug("self.rc.SpeedM1M2(self.address, vr_ticks, vl_ticks) :  %s" % status1)
+                rospy.logdebug("self.rc.SpeedM1M2(self.address, vr_ticks, vl_ticks) :  %s" % status1)
 
             except ValueError:
                 rospy.logwarn("tick value error")
