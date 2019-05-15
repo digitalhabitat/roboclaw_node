@@ -72,18 +72,18 @@ class EncoderOdom:
 
     def update_publish(self, enc_left, enc_right):
         if not isinstance(enc_left, int):
-            rospy.logerr("enc_left : %s" enc_left)
+            rospy.logerr("enc_left : %s", enc_left)
 
         if not isinstance(enc_right, int):
-            rospy.logerr("enc_right : %s" enc_right)
+            rospy.logerr("enc_right : %s", enc_right)
         
         # 2106 per 0.1 seconds is max speed, error in the 16th bit is 32768
         # TODO lets find a better way to deal with this error
         # Make sure this callback is ignored while reading encoders
         if abs(enc_left - self.last_enc_left) > 20000:
-            rospy.logerr("Ignoring left encoder jump: cur %d, last %d" enc_left, self.last_enc_left)
+            rospy.logerr("Ignoring left encoder jump: cur %d, last %d",  enc_left, self.last_enc_left)
         elif abs(enc_right - self.last_enc_right) > 20000:
-            rospy.logerr("Ignoring right encoder jump: cur %d, last %d" enc_right, self.last_enc_right )
+            rospy.logerr("Ignoring right encoder jump: cur %d, last %d", enc_right, self.last_enc_right )
         else:
             vel_x, vel_theta = self.update(enc_left, enc_right)
             self.publish_odom(self.cur_x, self.cur_y, self.cur_theta, vel_x, vel_theta)
@@ -249,9 +249,9 @@ class Node:
         # read encoder 1 *************************************************
         try:    
             status1, enc1, crc1 = self.rc.ReadEncM1(self.address)
-            rospy.logdebug("status1 :  %s" status1)
-            rospy.logdebug("enc1    :  %s" enc1)
-            rospy.logdebug("crc1    :  %s" crc1)
+            rospy.logdebug("status1 :  %s", status1)
+            rospy.logdebug("enc1    :  %s", enc1)
+            rospy.logdebug("crc1    :  %s", crc1)
             if type(enc1) is not int:
                 rospy.logwarn("enc1 is not integer, self.rc.ReadEncM1() not reading properly")
         except ValueError:
@@ -264,9 +264,9 @@ class Node:
         # read encoder 2 *************************************************
         try:
             status2, enc2, crc2 = self.rc.ReadEncM2(self.address)
-            rospy.logdebug("status2 :  %s" status2)
-            rospy.logdebug("enc2    :  %s" enc2)
-            rospy.logdebug("crc2    :  %s" crc2)
+            rospy.logdebug("status2 :  %s", status2)
+            rospy.logdebug("enc2    :  %s", enc2)
+            rospy.logdebug("crc2    :  %s", crc2)
             if type(enc2) is not int:
                 rospy.logwarn("enc2 is not integer, self.rc.ReadEncM2() not reading properly")
         except ValueError:
@@ -278,7 +278,7 @@ class Node:
 
         # update odom *************************************************
         if ('enc1' in vars()) and ('enc2' in vars()):
-            rospy.logdebug("enc1: %s  enc2: %s" enc1, enc2 )
+            rospy.logdebug("enc1: %s  enc2: %s", enc1, enc2 )
                
             rospy.logdebug("updating odom")
             self.encodm.update_publish(enc1, enc2)
@@ -321,11 +321,11 @@ class Node:
                 if vr_ticks is 0 and vl_ticks is 0:
                     status1 = self.rc.ForwardM1(self.address, 0)
                     status2 = self.rc.ForwardM2(self.address, 0)
-                    rospy.logdebug("self.rc.ForwardM1(self.address, 0) :  %s" status1)
-                    rospy.logdebug("self.rc.ForwardM2(self.address, 0) :  %s" status2)
+                    rospy.logdebug("self.rc.ForwardM1(self.address, 0) :  %s", status1)
+                    rospy.logdebug("self.rc.ForwardM2(self.address, 0) :  %s", status2)
                 else:
                     status1 = self.rc.SpeedM1M2(self.address, vr_ticks, vl_ticks)
-                    rospy.logdebug("self.rc.SpeedM1M2(self.address, vr_ticks, vl_ticks) :  %s" status1)
+                    rospy.logdebug("self.rc.SpeedM1M2(self.address, vr_ticks, vl_ticks) :  %s", status1)
 
             except ValueError:
                 rospy.logwarn("tick value error")
@@ -344,10 +344,10 @@ class Node:
                 # This is a hack way to keep a poorly tuned PID from making noise at speed 0 
                 if vx_ticks is 0:
                     status1 =  self.rc.ForwardM1(self.address, 0)
-                    rospy.logdebug("self.rc.ForwardM1(self.address, 0) :  %s" status1)
+                    rospy.logdebug("self.rc.ForwardM1(self.address, 0) :  %s", status1)
                 else:   
                     status1 = self.rc.SpeedM1(self.address, vx_ticks)
-                    rospy.logdebug("self.rc.SpeedM1(self.address, vx_ticks) :  %s" status1)
+                    rospy.logdebug("self.rc.SpeedM1(self.address, vx_ticks) :  %s", status1)
 
             except ValueError:
                 rospy.logwarn("tick value error")
