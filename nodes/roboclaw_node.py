@@ -250,7 +250,7 @@ class Node:
             status1, enc1, crc1 = self.rc.ReadEncM1(self.address)
             rospy.logdebug("status1 :  %s" % status1)
             rospy.logdebug("enc1    :  %s" % enc1)
-            rospy.logdeubg("crc1    :  %s" % crc1)
+            rospy.logdebug("crc1    :  %s" % crc1)
             if type(enc1) is not int:
                 rospy.logwarn("enc1 is not integer, self.rc.ReadEncM1() not reading properly")
         except ValueError:
