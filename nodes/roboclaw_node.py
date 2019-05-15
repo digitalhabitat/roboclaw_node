@@ -147,7 +147,7 @@ class Node:
                        0x8000: (diagnostic_msgs.msg.DiagnosticStatus.OK, "M2 home")}
 
         rospy.init_node("roboclaw_node")
-        rospy.on_shutdow    n(self.shutdown) # shutdown signal will trigger shutdown function
+        rospy.on_shutdown(self.shutdown) # shutdown signal will trigger shutdown function
         rospy.loginfo("Connecting to roboclaw")
         dev_name = rospy.get_param("~dev", "/dev/ttyACM0")
         baud_rate = int(rospy.get_param("~baud", "115200"))
