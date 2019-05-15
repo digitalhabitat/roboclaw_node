@@ -318,16 +318,16 @@ class Node:
                 # This is ba hack way to keep a poorly tuned PID from making noise at speed 0
                 # FIX getting a back callback with status1 = self.rc.ForwardM1(self.address, 0)
                 
-                """"
-                if vr_ticks is 0 and vl_ticks is 0:
-                    status1 = self.rc.ForwardM1(self.address, 0)
-                    status2 = self.rc.ForwardM2(self.address, 0)
-                    rospy.logdebug("self.rc.ForwardM1(self.address, 0) :  %s" % status1)
-                    rospy.logdebug("self.rc.ForwardM2(self.address, 0) :  %s" % status2)
-                else:
-                    status1 = self.rc.SpeedM1M2(self.address, vr_ticks, vl_ticks)
-                    rospy.logdebug("self.rc.SpeedM1M2(self.address, vr_ticks, vl_ticks) :  %s" % status1)
-                """"
+                 
+                #if vr_ticks is 0 and vl_ticks is 0:
+                #    status1 = self.rc.ForwardM1(self.address, 0)
+                #    status2 = self.rc.ForwardM2(self.address, 0)
+                #    rospy.logdebug("self.rc.ForwardM1(self.address, 0) :  %s" % status1)
+                #    rospy.logdebug("self.rc.ForwardM2(self.address, 0) :  %s" % status2)
+                #else:
+                #    status1 = self.rc.SpeedM1M2(self.address, vr_ticks, vl_ticks)
+                #    rospy.logdebug("self.rc.SpeedM1M2(self.address, vr_ticks, vl_ticks) :  %s" % status1)
+                
 
                 # above hack is not working
                 status1 = self.rc.SpeedM1M2(self.address, vr_ticks, vl_ticks)
