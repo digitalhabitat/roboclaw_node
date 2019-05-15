@@ -201,7 +201,7 @@ class Node:
         # using swri_ropspy.Subscriber() swri_ropspy.Timer() for single threaded callbacks
         # multithreaded cmd_callback would eventually cause crash while the while-loop was reading encoders 
         # https://github.com/swri-robotics/marti_common/blob/master/swri_rospy/nodes/single_threaded_example
-        swri_rospy.Subscriber(self.TWIST_COMMAND, Twist, self.cmd_vel_callback, queue_size="2" )
+        swri_rospy.Subscriber(self.TWIST_COMMAND, Twist, self.cmd_vel_callback, queue_size=2 )
         swri_rospy.Timer(rospy.Duration(0.1), self.timer_callback)
         rospy.sleep(1)
 
