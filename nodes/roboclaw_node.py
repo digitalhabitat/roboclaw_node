@@ -147,7 +147,7 @@ class Node:
                        0x8000: (diagnostic_msgs.msg.DiagnosticStatus.OK, "M2 home")}
 
         rospy.init_node("roboclaw_node")
-        rospy.on_shutdown(self.shutdown) # shutdown signal will trigger shutdown function
+        rospy.on_shutdow    n(self.shutdown) # shutdown signal will trigger shutdown function
         rospy.loginfo("Connecting to roboclaw")
         dev_name = rospy.get_param("~dev", "/dev/ttyACM0")
         baud_rate = int(rospy.get_param("~baud", "115200"))
@@ -252,7 +252,7 @@ class Node:
             rospy.logdebug("status1 :  %s", status1)
             rospy.logdebug("enc1    :  %s", enc1)
             rospy.logdebug("crc1    :  %s", crc1)
-            if type(enc1) is not int:
+            if not isinstance(enc1, int):
                 rospy.logwarn("enc1 is not integer, self.rc.ReadEncM1() not reading properly")
         except ValueError:
             rospy.logwarn("enc2 value error")
@@ -267,7 +267,7 @@ class Node:
             rospy.logdebug("status2 :  %s", status2)
             rospy.logdebug("enc2    :  %s", enc2)
             rospy.logdebug("crc2    :  %s", crc2)
-            if type(enc2) is not int:
+            if not isinstance(enc2, int):
                 rospy.logwarn("enc2 is not integer, self.rc.ReadEncM2() not reading properly")
         except ValueError:
             rospy.logwarn("enc2 value error")
