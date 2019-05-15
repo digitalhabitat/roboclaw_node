@@ -146,7 +146,7 @@ class Node:
                        0x4000: (diagnostic_msgs.msg.DiagnosticStatus.OK, "M1 home"),
                        0x8000: (diagnostic_msgs.msg.DiagnosticStatus.OK, "M2 home")}
 
-        rospy.init_node("roboclaw_node")
+        rospy.init_node("roboclaw_node", log_level=rospy.DEBUG)
         rospy.on_shutdown(self.shutdown) # shutdown signal will trigger shutdown function
         rospy.loginfo("Connecting to roboclaw")
         dev_name = rospy.get_param("~dev", "/dev/ttyACM0")
@@ -201,7 +201,7 @@ class Node:
         # using swri_ropspy.Subscriber() swri_ropspy.Timer() for single threaded callbacks
         # multithreaded cmd_callback would eventually cause crash while the while-loop was reading encoders 
         # https://github.com/swri-robotics/marti_common/blob/master/swri_rospy/nodes/single_threaded_example
-        swri_rospy.Subscriber(self.TWIST_COMMAND, Twist, self.cmd_vel_callback )
+        swri_rospy.Subscriber(self.TWIST_COMMAND, Twist, self.cmd_vel_callback, queue_size="2" )
         swri_rospy.Timer(rospy.Duration(0.1), self.timer_callback)
         rospy.sleep(1)
 
