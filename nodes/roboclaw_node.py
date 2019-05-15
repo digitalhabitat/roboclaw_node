@@ -247,6 +247,7 @@ class Node:
         status2, enc2, crc2 = None, None, None
 
         # read encoder 1 *************************************************
+        rospy.logdebug("reading encoder 1")
         try:    
             status1, enc1, crc1 = self.rc.ReadEncM1(self.address)
             rospy.logdebug("status1 :  %s", status1)
@@ -262,6 +263,7 @@ class Node:
             rospy.logdebug(e)
          
         # read encoder 2 *************************************************
+        rospy.logdebug("reading encoder 2")
         try:
             status2, enc2, crc2 = self.rc.ReadEncM2(self.address)
             rospy.logdebug("status2 :  %s", status2)
