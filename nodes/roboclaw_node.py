@@ -247,7 +247,7 @@ class Node:
         status2, enc2, crc2 = None, None, None
 
         # read encoder 1 *************************************************
-        rospy.logdebug("reading encoder 1")
+        rospy.logdebug("reading encoder 1, right motor")
         try:    
             status1, enc1, crc1 = self.rc.ReadEncM1(self.address)
             rospy.logdebug("status1 :  %s", status1)
@@ -263,7 +263,7 @@ class Node:
             rospy.logdebug(e)
          
         # read encoder 2 *************************************************
-        rospy.logdebug("reading encoder 2")
+        rospy.logdebug("reading encoder 2, left motor")
         try:
             status2, enc2, crc2 = self.rc.ReadEncM2(self.address)
             rospy.logdebug("status2 :  %s", status2)
@@ -283,12 +283,13 @@ class Node:
             rospy.logdebug("enc1: %s  enc2: %s", enc1, enc2 )
                
             rospy.logdebug("updating odom")
+  
             self.encodm.update_publish(enc1, enc2)
             self.updater.update()
         else:
             rospy.logdebug("encoder not in vars")
 
-        #rospy.loginfo(rospy.get_caller_id() + "                       timer_callback() done")
+        #rospy.loginfo(rospy.get_caller_id() + "timer_callback() done")
             
 
     def cmd_vel_callback(self, twist):
@@ -311,8 +312,8 @@ class Node:
         if self.SINGLE_MOTOR  == 0:
 
             # a postive yaw angle should turn left meaning...
-            # the right motor M1 must turn faster and...
-            # the left motor M2 must turn slower 
+            # the right motor M2 must turn faster and...
+            # the left motor M1 must turn slower 
             vr = linear_x + twist.angular.z * self.BASE_WIDTH / 2.0  # m/s
             vl = linear_x - twist.angular.z * self.BASE_WIDTH / 2.0
 
@@ -330,8 +331,8 @@ class Node:
                     rospy.logdebug("self.rc.ForwardM1(self.address, 0) :  %s", status1)
                     rospy.logdebug("self.rc.ForwardM2(self.address, 0) :  %s", status2)
                 else:
-                    status1 = self.rc.SpeedM1M2(self.address, vr_ticks, vl_ticks)
-                    rospy.logdebug("self.rc.SpeedM1M2(self.address, vr_ticks, vl_ticks) :  %s", status1)
+                    status1 = self.rc.SpeedM1M2(self.address, vl_ticks, vr_ticks)
+                    rospy.logdebug("self.rc.SpeedM1M2(self.address, vl_ticks, vr_ticks) :  %s", status1)
 
             except ValueError:
                 rospy.logwarn("tick value error")
