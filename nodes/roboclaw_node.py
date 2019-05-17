@@ -309,6 +309,10 @@ class Node:
 
         # if Dual motor differential driver mode
         if self.SINGLE_MOTOR  == 0:
+
+            # a postive yaw angle should turn left meaning...
+            # the right motor M1 must turn faster and...
+            # the left motor M2 must turn slower 
             vr = linear_x + twist.angular.z * self.BASE_WIDTH / 2.0  # m/s
             vl = linear_x - twist.angular.z * self.BASE_WIDTH / 2.0
 
